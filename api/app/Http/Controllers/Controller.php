@@ -10,27 +10,29 @@ use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Routing\Controller as BaseController;
 
-
 abstract class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function emptySend(): Response 
+    public function emptySend(): Response
     {
         return response()->noContent(Response::HTTP_NO_CONTENT);
     }
-    public function send($data = null, int $status = 200, array $headers = []): JsonResponse|Response
+
+    public function send($data = null, $status = 200, $headers = []): Response|JsonResponse
     {
         if ($data === null && $status === 204) {
             return $this->emptySend();
         }
-        $response = $data ?? [];
+
+        $responseData = $data ?? [];
 
         return response()->json([
             'status' => $status,
-            'data' => $response
-        ], $status, $headers, empty($response) ? JSON_FORCE_OBJECT : JSON_ERROR_NONE);
+            'data' => $responseData,
+        ], $status, $headers, empty($responseData) ? JSON_FORCE_OBJECT : JSON_ERROR_NONE);
     }
+
     public function sendError($data, $status): JsonResponse
     {
         return response()->json([
@@ -40,6 +42,7 @@ abstract class Controller extends BaseController
             ],
         ], $status);
     }
+
     public function sendPaginatedData(LengthAwarePaginator $paginator): JsonResponse
     {
         return response()->json(
@@ -54,5 +57,10 @@ abstract class Controller extends BaseController
                 'data' => $paginator->getCollection()->toArray(),
             ]
         );
+    }
+
+    public function noContent()
+    {
+
     }
 }
