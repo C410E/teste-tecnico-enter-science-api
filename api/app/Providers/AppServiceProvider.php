@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Repositories\ArtistRepository;
+use App\Repositories\Interfaces\ArtistRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +13,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->registerSingletons();
     }
 
     /**
@@ -20,5 +22,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+    }
+
+    private function registerSingletons(): void
+    {
+        $this->app->singleton(ArtistRepositoryInterface::class, ArtistRepository::class);
     }
 }
